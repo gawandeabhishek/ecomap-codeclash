@@ -88,7 +88,7 @@ const NavigationPage = () => {
   const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   const MAP_STYLE =
-    "https://corsproxy.io/https://tile.openstreetmap.jp/styles/osm-bright-en/style.json";
+    "https://tile.openstreetmap.jp/styles/osm-bright-en/style.json";
   const FALLBACK_MAP_STYLE = "https://demotiles.maplibre.org/style.json";
 
   // Offline cache keys

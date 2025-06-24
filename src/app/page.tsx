@@ -1,4 +1,3 @@
-import { onAuthenticateUser } from "@/actions/user";
 import { Benefits } from "@/components/benefits";
 import { CTA } from "@/components/cta";
 import { Features } from "@/components/features";
@@ -9,8 +8,6 @@ import { Pricing } from "@/components/pricing";
 import { Testimonials } from "@/components/testimonials";
 
 export default async function Home() {
-  await onAuthenticateUser();
-
   return (
     <div>
       <Header />
