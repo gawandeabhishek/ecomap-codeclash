@@ -1,11 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { ArrowRight, Globe, MapPin, Star, WifiOff } from "lucide-react";
+import Link from "next/link";
 
 export function Hero() {
+  const user = useAuth();
   return (
     <section className="pt-24 pb-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,13 +43,16 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="group bg-primary hover:bg-primary/90 text-white px-8"
+              <Link
+                href={user.sessionId ? "/navigation" : "/auth/sign-in"}
+                className={cn(
+                  buttonVariants({ size: "lg", variant: "default" }),
+                  "group bg-primary hover:bg-primary/90 text-white px-8"
+                )}
               >
                 Get Started Free
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-              </Button>
+              </Link>
               {/* <Button size="lg" variant="outline" className="group border-primary text-primary hover:bg-primary hover:text-white px-8">
                 <Download className="w-4 h-4 mr-2" />
                 Download App
