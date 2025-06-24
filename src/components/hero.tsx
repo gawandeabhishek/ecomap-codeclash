@@ -82,7 +82,7 @@ export function Hero() {
               <img
                 src="https://images.unsplash.com/photo-1587813167683-a8717be30717?w=600&h=600&fit=crop&crop=center"
                 alt="EcoMap interface showing offline maps"
-                className="relative rounded-3xl shadow-2xl w-full h-[600px] object-cover ml-8 sm:ml-0"
+                className="relative rounded-3xl shadow-2xl w-full h-[300px] sm:h-[600px] object-cover"
               />
 
               {/* Floating status cards */}
