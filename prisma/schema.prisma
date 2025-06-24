@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  clerkUserId   String         @unique @map("clerk_user_id")
+  subscriptions Subscription[]
+
+  // Personal info fields
+  name     String? @map("name") // Added
+  lastName String? @map("last_name") // Added
+
+  // Billing info fields
+  billingEmail String? @map("billing_email")
+  taxId        String? @map("tax_id")
+  addressLine1 String? @map("address_line_1")
+  addressLine2 String? @map("address_line_2")
+  city         String?
+  state        String?
+  postalCode   String? @map("postal_code")
+  country      String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  userId                 String             @map("user_id")
+  user                   User               @relation(fields: [userId], references: [id])
+  razorpaySubscriptionId String             @unique @map("razorpay_subscription_id")
+  razorpayPlanId         String             @map("razorpay_plan_id")
+  status                 SubscriptionStatus
+  currentStart           DateTime?          @map("current_start")
+  currentEnd             DateTime?          @map("current_end")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @updatedAt @map("updated_at")
+
+  payments Payment[]
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  subscriptionId    String        @map("subscription_id")
+  subscription      Subscription  @relation(fields: [subscriptionId], references: [id])
+  razorpayPaymentId String        @unique @map("razorpay_payment_id")
+  amount            Int // in smallest currency unit (paise for INR)
+  currency          String        @default("INR")
+  status            PaymentStatus
+  method            String? // "card", "netbanking", etc.
+  invoiceId         String?       @map("invoice_id")
+  createdAt         DateTime      @default(now()) @map("created_at")
+
+  @@map("payments")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PENDING
+  HALTED
+  CANCELLED
+  EXPIRED
+  PAUSED
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  REFUNDED
+  FAILED
+}
