@@ -1,9 +1,8 @@
-import React from "react";
-import { SignIn as ClerkSignIn } from "@clerk/nextjs";
 import { onAuthenticateUser } from "@/actions/user";
+import { SignIn as ClerkSignIn } from "@clerk/nextjs";
 
 const SignIn = async () => {
-  const auth = await onAuthenticateUser();
+  await onAuthenticateUser();
   return <ClerkSignIn />;
 };
 

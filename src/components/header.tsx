@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Menu, X, MapPin } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
-import { useAuth } from "@clerk/clerk-react";
-import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
+import { MapPin, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
