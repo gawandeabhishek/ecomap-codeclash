@@ -2,20 +2,29 @@
   "version": 8,
   "name": "Offline Map",
   "sources": {
-    "osm-cached": {
-      "type": "raster",
-      "tiles": ["/vector-tiles/{z}/{x}/{y}.png"],
-      "tileSize": 256,
-      "maxzoom": 19
+    "static-map": {
+      "type": "image",
+      "url": "/offline-map.jpg",
+      "coordinates": [
+        [77.564, 13.022],
+        [77.734, 13.022],
+        [77.734, 12.842],
+        [77.564, 12.842]
+      ]
     }
   },
   "layers": [
     {
-      "id": "osm-cached-layer",
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#e0e0e0"
+      }
+    },
+    {
+      "id": "static-map-layer",
       "type": "raster",
-      "source": "osm-cached",
-      "minzoom": 0,
-      "maxzoom": 22
+      "source": "static-map"
     }
   ]
 }

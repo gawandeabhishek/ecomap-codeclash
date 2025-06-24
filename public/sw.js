@@ -19,8 +19,20 @@ const APP_SHELL_FILES = [
 
 const DEBUG = true;
 
+const PRE_CACHED_TILES = [
+  "/vector-tiles/12/1205/1540.png",
+  "/vector-tiles/12/1205/1541.png",
+  "/vector-tiles/12/1206/1540.png",
+  "/vector-tiles/12/1206/1541.png",
+  "/vector-tiles/0/0/0.png", // world tile for low zoom
+];
+
 function log(...args) {
   if (DEBUG) console.log("[SW]", ...args);
+}
+
+function isHttpRequest(request) {
+  return request.url.startsWith("http:") || request.url.startsWith("https:");
 }
 
 self.addEventListener("install", (event) => {
@@ -74,6 +86,25 @@ self.addEventListener("install", (event) => {
       );
     })
   );
+
+  event.waitUntil(
+    (async () => {
+      const cache = await caches.open(VECTOR_TILE_CACHE);
+      await Promise.all(
+        PRE_CACHED_TILES.map(async (tileUrl) => {
+          try {
+            const response = await fetch(tileUrl);
+            if (response.ok) {
+              await cache.put(tileUrl, response.clone());
+            }
+          } catch (e) {
+            // Ignore fetch errors
+          }
+        })
+      );
+    })()
+  );
+
   self.skipWaiting();
 });
 
@@ -106,6 +137,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  if (!isHttpRequest(request)) return;
   const url = new URL(request.url);
 
   // Skip non-GET requests
@@ -125,7 +157,37 @@ self.addEventListener("fetch", (event) => {
 
   // Handle vector tile requests
   if (url.pathname.startsWith("/vector-tiles/")) {
-    event.respondWith(handleVectorTileRequest(request));
+    const match = url.pathname.match(
+      /\/vector-tiles\/(\d+)\/(\d+)\/(\d+)\.png/
+    );
+    if (match) {
+      const z = parseInt(match[1]);
+      if (z < 6) {
+        event.respondWith(caches.match("/vector-tiles/0/0/0.png"));
+        return;
+      }
+    }
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(VECTOR_TILE_CACHE);
+        const cached = await cache.match(request.url);
+        if (cached) return cached;
+        try {
+          const response = await fetch(request);
+          if (response.ok) {
+            cache.put(request.url, response.clone());
+            return response;
+          }
+        } catch (e) {
+          // Ignore fetch errors
+        }
+        // Return blank tile if not found
+        return new Response(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect width="256" height="256" fill="#e0e0e0"/></svg>',
+          { headers: { "Content-Type": "image/svg+xml" } }
+        );
+      })()
+    );
     return;
   }
 
@@ -155,6 +217,7 @@ self.addEventListener("fetch", (event) => {
 
 // Handle location data requests
 async function handleLocationDataRequest(request) {
+  if (!isHttpRequest(request)) return fetch(request);
   const cache = await caches.open(LOCATION_DATA_CACHE);
   const cached = await cache.match(request);
 
@@ -174,41 +237,6 @@ async function handleLocationDataRequest(request) {
   } catch (err) {
     log("Location data fetch failed:", request.url);
     return new Response("", { status: 404 });
-  }
-}
-
-// Update vector tile handling
-async function handleVectorTileRequest(request) {
-  const cache = await caches.open(VECTOR_TILE_CACHE);
-  const url = new URL(request.url);
-
-  // Normalize the URL by removing query parameters
-  const cleanUrl = new URL(url.pathname, self.location.origin).href;
-  const cleanRequest = new Request(cleanUrl);
-
-  const cached = await cache.match(cleanRequest);
-
-  if (cached) {
-    log("Cache hit (vector tile):", cleanUrl);
-    return cached;
-  }
-
-  try {
-    const response = await fetch(request);
-    // Cache successful responses
-    if (response.status === 200 && response.body) {
-      // Cache with network-first strategy
-      const clonedResponse = response.clone();
-      cache.put(cleanRequest, clonedResponse);
-    }
-    return response;
-  } catch (err) {
-    log("Vector tile fetch failed:", cleanUrl);
-    // Serve blank tile for uncached areas
-    return new Response(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect width="256" height="256" fill="#e0e0e0"/></svg>',
-      { headers: { "Content-Type": "image/svg+xml" } }
-    );
   }
 }
 
