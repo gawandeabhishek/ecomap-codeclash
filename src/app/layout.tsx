@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ClientProviders from "../components/ClientProviders";
 import "./globals.css";
-import { onAuthenticateUser } from "@/actions/user";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +25,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  await onAuthenticateUser();
   return (
     <ClerkProvider>
       <html lang="en">

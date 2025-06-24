@@ -1,32 +1,32 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  Building,
+  Clock,
+  Loader2,
+  Locate,
+  MapPin,
+  Navigation,
+  Route,
+  Search,
+  WifiOff,
+  X,
+} from "lucide-react";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Map, {
-  Source,
   Layer,
   Marker,
   NavigationControl,
+  Source,
 } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { motion, AnimatePresence } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
-import maplibregl from "maplibre-gl";
-import {
-  Navigation,
-  MapPin,
-  Loader2,
-  AlertCircle,
-  Route,
-  Search,
-  X,
-  Locate,
-  Clock,
-  Building,
-  WifiOff,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface LocationSuggestion {
   id: string;

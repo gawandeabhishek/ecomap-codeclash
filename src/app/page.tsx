@@ -1,13 +1,15 @@
-import { Benefits } from '@/components/benefits';
-import { CTA } from '@/components/cta';
-import { Features } from '@/components/features';
-import { Footer } from '@/components/footer';
-import { Header } from '@/components/header';
-import { Hero } from '@/components/hero';
-import { Pricing } from '@/components/pricing';
-import { Testimonials } from '@/components/testimonials';
+import { onAuthenticateUser } from "@/actions/user";
+import { Benefits } from "@/components/benefits";
+import { CTA } from "@/components/cta";
+import { Features } from "@/components/features";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
+import { Hero } from "@/components/hero";
+import { Pricing } from "@/components/pricing";
+import { Testimonials } from "@/components/testimonials";
 
-export default function Home() {
+export default async function Home() {
+  await onAuthenticateUser();
 
   return (
     <div>
@@ -19,6 +21,6 @@ export default function Home() {
       <Pricing />
       <CTA />
       <Footer />
-  </div>
+    </div>
   );
 }
