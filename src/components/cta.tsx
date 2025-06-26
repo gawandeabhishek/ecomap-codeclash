@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Download, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { ArrowRight, MapPin } from "lucide-react";
 
 export function CTA() {
   return (
@@ -47,15 +47,6 @@ export function CTA() {
             >
               Go Premium
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
-            </Button>
-
-            <Button
-              size="lg"
-              variant="outline"
-              className="group border-white text-white bg-primary hover:bg-white hover:text-primary px-8 py-4 text-lg"
-            >
-              <Download className="w-5 h-5 mr-2" />
-              Download App
             </Button>
           </motion.div>
 
