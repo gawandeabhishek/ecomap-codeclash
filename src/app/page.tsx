@@ -18,6 +18,8 @@ function SubscriptionStatus() {
       .then(setStatus);
   }, []);
   if (!status) return null;
+
+  console.log("status", status);
   return (
     <div className="my-8 text-center">
       {status.active ? (
