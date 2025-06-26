@@ -95,7 +95,7 @@ export function Benefits() {
               <img
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop&crop=center"
                 alt="Person using EcoMap for outdoor navigation"
-                className="rounded-3xl shadow-2xl w-full h-[700px] object-cover"
+                className="rounded-3xl shadow-2xl w-full h-[500px] sm:h-[700px] object-cover"
               />
 
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-3xl"></div>

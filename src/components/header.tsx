@@ -33,7 +33,9 @@ export function Header() {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">EcoMap</span>
+            <span className="text-sm sm:text-xl font-bold text-gray-900">
+              EcoMap
+            </span>
           </div>
 
           {/* Desktop Navigation */}
@@ -89,32 +91,34 @@ export function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:text-primary"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-
-          <div className="flex items-center gap-4">
-            {user.sessionId &&
-              subStatus !== null &&
-              (subStatus ? (
-                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full font-semibold text-sm">
-                  Premium
-                </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-md text-gray-700 hover:text-primary"
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
               ) : (
-                <Link href="/payment">
-                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-sm cursor-pointer hover:bg-yellow-200 transition">
-                    Free
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+
+            <div className="flex items-center gap-4">
+              {user.sessionId &&
+                subStatus !== null &&
+                (subStatus ? (
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full font-semibold text-xs sm:text-sm">
+                    Premium
                   </span>
-                </Link>
-              ))}
-            <UserButton afterSignOutUrl="/" />
+                ) : (
+                  <Link href="/payment">
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-xs sm:text-sm cursor-pointer hover:bg-yellow-200 transition">
+                      Free
+                    </span>
+                  </Link>
+                ))}
+              <UserButton afterSignOutUrl="/" />
+            </div>
           </div>
         </div>
 
