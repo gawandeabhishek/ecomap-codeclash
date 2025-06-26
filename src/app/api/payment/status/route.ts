@@ -14,6 +14,6 @@ export async function GET() {
     });
     return NextResponse.json({ active: !!subscription });
   } catch {
-    return NextResponse.json({ active: false });
+    return NextResponse.json({});
   }
 }
