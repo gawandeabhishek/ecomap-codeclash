@@ -1,65 +1,56 @@
-"use client"
-
-import { motion } from 'framer-motion';
-import { Check, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
+import { Check, Star } from "lucide-react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const plans = [
   {
-    name: "Explorer",
+    name: "Free",
     price: "Free",
     period: "forever",
-    description: "Perfect for casual users and weekend adventurers",
+    description:
+      "Basic offline maps, up to 3 saved locations, and standard navigation.",
     features: [
       "Basic offline maps",
       "Up to 3 saved locations",
       "Standard navigation",
       "Community support",
-      "Basic search functionality"
+      "Basic search",
     ],
     buttonText: "Get Started",
-    popular: false
+    popular: false,
   },
   {
-    name: "Navigator",
+    name: "Premium",
     price: "12",
     period: "month",
-    description: "Ideal for frequent travelers and outdoor enthusiasts",
+    description:
+      "Full offline map caching, unlimited saved locations, turn-by-turn voice navigation, and more.",
     features: [
-      "Premium offline maps",
+      "Full offline map caching",
       "Unlimited saved locations",
-      "Advanced navigation features",
-      "Priority support",
-      "Detailed POI database",
+      "Turn-by-turn voice navigation",
       "Route optimization",
-      "Weather integration",
-      "Export capabilities"
+      "Priority support",
+      "No ads",
+      "Real-time traffic updates",
     ],
-    buttonText: "Start Free Trial",
-    popular: true
+    buttonText: "Go Premium",
+    popular: true,
   },
-  {
-    name: "Professional",
-    price: "29",
-    period: "month",
-    description: "Built for businesses and professional use cases",
-    features: [
-      "Everything in Navigator",
-      "Team collaboration tools",
-      "Advanced analytics",
-      "Custom map layers",
-      "API access",
-      "White-label options",
-      "Dedicated support",
-      "Enterprise security"
-    ],
-    buttonText: "Contact Sales",
-    popular: false
-  }
 ];
 
 export function Pricing() {
+  const handlePlanSelect = (plan: (typeof plans)[0]) => {
+    if (plan.name === "Free") {
+      window.location.href = "/navigation";
+    } else if (plan.name === "Premium") {
+      window.location.href = "/payment";
+    }
+  };
+
   return (
     <section id="pricing" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,10 +62,13 @@ export function Pricing() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Choose your <span className="text-gradient">adventure plan</span>
+            Choose your{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              adventure plan
+            </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Start with our free plan and upgrade as your navigation needs grow. 
+            Start with our free plan and upgrade as your navigation needs grow.
             All plans include our core offline-first technology.
           </p>
         </motion.div>
@@ -91,16 +85,24 @@ export function Pricing() {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-1">
+                  <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center space-x-1">
                     <Star className="w-4 h-4" />
                     <span>Most Popular</span>
                   </span>
                 </div>
               )}
-              
-              <Card className={`h-full ${plan.popular ? 'border-primary shadow-xl scale-105' : 'border-gray-200'} transition-all duration-300 hover:shadow-lg pt-6`}>
+
+              <Card
+                className={`h-full ${
+                  plan.popular
+                    ? "border-blue-600 shadow-xl scale-105"
+                    : "border-gray-200"
+                } transition-all duration-300 hover:shadow-lg pt-6`}
+              >
                 <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</CardTitle>
+                  <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
+                    {plan.name}
+                  </CardTitle>
                   <div className="mb-4">
                     <span className="text-5xl font-bold text-gray-900">
                       {plan.price === "Free" ? "Free" : `$${plan.price}`}
@@ -111,23 +113,28 @@ export function Pricing() {
                   </div>
                   <p className="text-gray-600">{plan.description}</p>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-6">
                   <ul className="space-y-4">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center space-x-3">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                      <li
+                        key={featureIndex}
+                        className="flex items-center space-x-3"
+                      >
+                        <Check className="w-5 h-5 text-blue-600 flex-shrink-0" />
                         <span className="text-gray-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
-                  
-                  <Button 
-                    className={`w-full ${plan.popular 
-                      ? 'bg-primary hover:bg-primary/90 text-white' 
-                      : 'bg-white border border-primary text-primary hover:bg-primary hover:text-white'
+
+                  <Button
+                    className={`w-full ${
+                      plan.popular
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-white border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                     }`}
                     size="lg"
+                    onClick={() => handlePlanSelect(plan)}
                   >
                     {plan.buttonText}
                   </Button>

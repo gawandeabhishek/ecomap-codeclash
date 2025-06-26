@@ -6,11 +6,19 @@ import { useAuth } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
 import { MapPin, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { UserButton } from "@clerk/nextjs";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = useAuth();
+  const [subStatus, setSubStatus] = useState<null | boolean>(null);
+
+  useEffect(() => {
+    fetch("/api/payment/status")
+      .then((res) => res.json())
+      .then((data) => setSubStatus(!!data.active));
+  }, []);
 
   return (
     <motion.header
@@ -91,6 +99,23 @@ export function Header() {
               <Menu className="w-6 h-6" />
             )}
           </button>
+
+          <div className="flex items-center gap-4">
+            {user.sessionId &&
+              subStatus !== null &&
+              (subStatus ? (
+                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full font-semibold text-sm">
+                  Premium
+                </span>
+              ) : (
+                <Link href="/payment">
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold text-sm cursor-pointer hover:bg-yellow-200 transition">
+                    Free
+                  </span>
+                </Link>
+              ))}
+            <UserButton afterSignOutUrl="/" />
+          </div>
         </div>
 
         {/* Mobile Navigation */}

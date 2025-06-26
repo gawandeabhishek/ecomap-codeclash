@@ -3,6 +3,7 @@ import { OfflineProvider } from "../contexts/OfflineContext";
 import OfflineIndicator from "./offline/OfflineIndicator";
 import ServiceWorkerStatus from "./offline/ServiceWorkerStatus";
 import SyncStatus from "./offline/SyncStatus";
+import ConditionalServiceWorkerSetup from "@/components/ConditionalServiceWorkerSetup";
 
 export default function ClientProviders({
   children,
@@ -14,6 +15,7 @@ export default function ClientProviders({
       <OfflineIndicator />
       <ServiceWorkerStatus />
       <SyncStatus />
+      <ConditionalServiceWorkerSetup />
       {children}
     </OfflineProvider>
   );

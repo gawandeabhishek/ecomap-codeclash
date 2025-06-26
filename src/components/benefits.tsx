@@ -1,33 +1,34 @@
-"use client"
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle, Users, Globe, Clock, Award } from 'lucide-react';
+import { motion } from "framer-motion";
+import { CheckCircle, Users, Globe, Clock, Award } from "lucide-react";
 
 const benefits = [
   {
     icon: CheckCircle,
-    title: 'Always Reliable',
-    description: 'Works anywhere, anytime - from city centers to remote wilderness areas.',
-    stats: '99.9% uptime'
+    title: "Offline-First Reliability",
+    description: "Navigate confidently anywhere, even without internet.",
+    stats: "99.9% uptime",
   },
   {
     icon: Users,
-    title: 'Trusted by Millions',
-    description: 'Join over 500,000 users who rely on EcoMap for their navigation needs.',
-    stats: '500K+ users'
+    title: "Loved by Explorers",
+    description: "Join over 500,000 users who trust EcoMap for their journeys.",
+    stats: "500K+ users",
   },
   {
     icon: Globe,
-    title: 'Global Coverage',
-    description: 'Detailed maps available for every country and region worldwide.',
-    stats: '195 countries'
+    title: "Global Coverage",
+    description: "Detailed maps for every country and region worldwide.",
+    stats: "195 countries",
   },
   {
     icon: Clock,
-    title: 'Save Time & Data',
-    description: 'Download once, use forever. No more worrying about data usage.',
-    stats: '90% data savings'
-  }
+    title: "Save Time & Data",
+    description:
+      "Download once, use forever. No more worrying about data usage.",
+    stats: "90% data savings",
+  },
 ];
 
 export function Benefits() {
@@ -44,11 +45,13 @@ export function Benefits() {
           >
             <div>
               <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-                Why choose <span className="text-gradient">EcoMap</span>?
+                Why choose <span className="text-gradient">EcoMap Premium</span>
+                ?
               </h2>
               <p className="text-xl text-gray-600 leading-relaxed">
-                We&apos;ve built the most reliable offline-first mapping platform that adapts to your needs, 
-                whether you&apos;re planning a weekend hike or navigating through urban environments.
+                Unlock the full power of offline navigation. Premium users enjoy
+                unlimited offline caching, advanced features, and priority
+                support.
               </p>
             </div>
 
@@ -69,7 +72,9 @@ export function Benefits() {
                     <h3 className="text-xl font-semibold text-gray-900">
                       {benefit.title}
                     </h3>
-                    <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+                    <p className="text-gray-600 leading-relaxed">
+                      {benefit.description}
+                    </p>
                     <span className="inline-flex items-center text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
                       {benefit.stats}
                     </span>
@@ -92,9 +97,9 @@ export function Benefits() {
                 alt="Person using EcoMap for outdoor navigation"
                 className="rounded-3xl shadow-2xl w-full h-[700px] object-cover"
               />
-              
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent rounded-3xl"></div>
-              
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -107,11 +112,13 @@ export function Benefits() {
                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                       <Award className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="font-semibold text-gray-900">Adventure Mode Activated</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Adventure Mode Activated
+                    </h3>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Navigate confidently through any terrain with our offline-first technology. 
-                    Your adventure starts here.
+                    Navigate confidently through any terrain with our
+                    offline-first technology. Your adventure starts here.
                   </p>
                 </div>
               </motion.div>

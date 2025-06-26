@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { motion } from 'framer-motion';
-import { ArrowRight, Download, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { motion } from "framer-motion";
+import { ArrowRight, Download, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function CTA() {
   return (
@@ -21,14 +21,15 @@ export function CTA() {
                 <MapPin className="w-8 h-8 text-white" />
               </div>
             </div>
-            
+
             <h2 className="text-4xl sm:text-5xl font-bold text-white">
-              Ready to navigate with confidence?
+              Ready to unlock full offline navigation?
             </h2>
-            
+
             <p className="text-xl text-white/90 max-w-3xl mx-auto">
-              Join over 500,000 users who trust EcoMap for their navigation needs. 
-              Start your journey today with our free plan.
+              Upgrade to EcoMap Premium and enjoy unlimited offline caching,
+              advanced navigation, and priority support. Start your journey
+              today!
             </p>
           </motion.div>
 
@@ -39,16 +40,17 @@ export function CTA() {
             viewport={{ once: true }}
             className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6"
           >
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="group bg-white text-primary hover:bg-gray-100 px-8 py-4 text-lg"
+              onClick={() => (window.location.href = "/payment")}
             >
-              Get Started Free
+              Go Premium
               <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
-            
-            <Button 
-              size="lg" 
+
+            <Button
+              size="lg"
               variant="outline"
               className="group border-white text-white bg-primary hover:bg-white hover:text-primary px-8 py-4 text-lg"
             >

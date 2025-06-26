@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useOfflineContext } from '../../contexts/OfflineContext';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Badge } from '@/components/ui/badge';
+import { useOfflineContext } from "../../contexts/OfflineContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 export default function OfflineIndicator() {
   const { isOnline } = useOfflineContext();
@@ -29,7 +29,7 @@ export default function OfflineIndicator() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -50, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-4 left-1/2 z-50 -translate-x-1/2"
+          className="fixed top-14 left-1/2 z-50 -translate-x-1/2"
         >
           <Badge className="bg-green-500 text-white px-4 py-2 shadow-lg rounded-full">
             <span className="mr-2">🟢</span>
@@ -39,4 +39,4 @@ export default function OfflineIndicator() {
       )}
     </AnimatePresence>
   );
-} 
+}

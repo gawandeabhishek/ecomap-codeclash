@@ -1,53 +1,54 @@
-"use client"
+"use client";
 
-import { motion } from 'framer-motion';
-import { 
-  Map, 
-  Search, 
-  Navigation, 
-  Share, 
-  Shield,
-  Zap,
-} from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from "framer-motion";
+import { Map, Search, Navigation, Shield, Zap } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const features = [
   {
     icon: Map,
-    title: 'Offline Maps',
-    description: 'Download detailed maps for any region and access them without internet connection.',
-    image: 'https://images.unsplash.com/photo-1627666260660-812e4684a600?w=400&h=300&fit=crop'
+    title: "Offline Maps",
+    description: "Download and use maps anywhere, anytime. No signal required.",
+    image:
+      "https://images.unsplash.com/photo-1627666260660-812e4684a600?w=400&h=300&fit=crop",
   },
   {
     icon: Navigation,
-    title: 'GPS Navigation', 
-    description: 'Turn-by-turn navigation that works even in remote areas without cell coverage.',
-    image: 'https://images.unsplash.com/photo-1486520299386-6d106b22014b?w=400&h=300&fit=crop'
-  },
-  {
-    icon: Search,
-    title: 'Smart Search',
-    description: 'Find locations, addresses, and points of interest instantly, even offline.',
-    image: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop'
-  },
-  {
-    icon: Share,
-    title: 'Location Sharing',
-    description: 'Share your location and routes with friends and family safely.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop'
-  },
-  {
-    icon: Shield,
-    title: 'Privacy First',
-    description: 'Your location data stays on your device. No tracking, no data collection.',
-    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop'
+    title: "Turn-by-Turn Voice Navigation",
+    description: "Get clear spoken directions, even when offline.",
+    image:
+      "https://images.unsplash.com/photo-1486520299386-6d106b22014b?w=400&h=300&fit=crop",
   },
   {
     icon: Zap,
-    title: 'Lightning Fast',
-    description: 'Optimized for speed and efficiency. Quick startup, instant search results.',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop'
-  }
+    title: "Premium Route Caching",
+    description:
+      "Premium users enjoy full offline route caching for worry-free travel.",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+  },
+  {
+    icon: Search,
+    title: "Smart Search",
+    description:
+      "Find locations, addresses, and points of interest instantly, even offline.",
+    image:
+      "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=300&fit=crop",
+  },
+  {
+    icon: Shield,
+    title: "Privacy First",
+    description:
+      "Your location data stays on your device. No tracking, no data collection.",
+    image:
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop",
+  },
 ];
 
 export function Features() {
@@ -62,12 +63,13 @@ export function Features() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Everything you need for{' '}
-            <span className="text-gradient">reliable navigation</span>
+            Everything you need for{" "}
+            <span className="text-gradient">offline-first navigation</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Built for adventurers, professionals, and everyday users who need maps they can count on, 
-            no matter where they are or what the connection is like.
+            EcoMap is built for explorers, commuters, and anyone who needs
+            reliable maps and navigation—online or offline. Upgrade to premium
+            for unlimited offline caching and advanced features.
           </p>
         </motion.div>
 
@@ -100,7 +102,9 @@ export function Features() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base text-gray-600">{feature.description}</CardDescription>
+                  <CardDescription className="text-base text-gray-600">
+                    {feature.description}
+                  </CardDescription>
                 </CardContent>
               </Card>
             </motion.div>

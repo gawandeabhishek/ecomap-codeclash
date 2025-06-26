@@ -28,17 +28,19 @@ export function Hero() {
                 className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium"
               >
                 <WifiOff className="w-4 h-4" />
-                <span>Offline-First Technology</span>
+                <span>Offline-First Navigation</span>
               </motion.div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
-                Navigate anywhere,{" "}
-                <span className="text-gradient">anytime</span>
+                Explore anywhere,{" "}
+                <span className="text-gradient">even offline</span>
               </h1>
 
               <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
-                The most reliable offline-first mapping solution. Download once,
-                navigate forever - from bustling cities to remote wilderness.
+                EcoMap empowers you to navigate, save routes, and get
+                turn-by-turn voice guidance even without an internet connection.
+                Upgrade to premium for unlimited offline caching and advanced
+                features.
               </p>
             </div>
 
