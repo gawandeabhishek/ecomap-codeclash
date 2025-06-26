@@ -1,11 +1,10 @@
 "use client";
+import ConditionalServiceWorkerSetup from "@/components/ConditionalServiceWorkerSetup";
 import { useAuth } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { OfflineProvider } from "../contexts/OfflineContext";
-import OfflineIndicator from "./offline/OfflineIndicator";
 import ServiceWorkerStatus from "./offline/ServiceWorkerStatus";
 import SyncStatus from "./offline/SyncStatus";
-import ConditionalServiceWorkerSetup from "@/components/ConditionalServiceWorkerSetup";
-import { useEffect, useState } from "react";
 
 export default function ClientProviders({
   children,
@@ -36,7 +35,6 @@ export default function ClientProviders({
 
   return (
     <OfflineProvider>
-      <OfflineIndicator />
       <ServiceWorkerStatus />
       <SyncStatus />
       <ConditionalServiceWorkerSetup />
