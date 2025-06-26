@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const user = await currentUser();
-    if (!user) return NextResponse.json({});
+    if (!user) return;
     const subscription = await prisma.subscription.findFirst({
       where: {
         user: { clerkUserId: user.id },
