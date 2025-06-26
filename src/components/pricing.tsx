@@ -24,7 +24,7 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "12",
+    price: "1000",
     period: "month",
     description:
       "Full offline map caching, unlimited saved locations, turn-by-turn voice navigation, and more.",
@@ -105,7 +105,7 @@ export function Pricing() {
                   </CardTitle>
                   <div className="mb-4">
                     <span className="text-5xl font-bold text-gray-900">
-                      {plan.price === "Free" ? "Free" : `$${plan.price}`}
+                      {plan.price === "Free" ? "Free" : `₹${plan.price}`}
                     </span>
                     {plan.price !== "Free" && (
                       <span className="text-gray-600">/{plan.period}</span>
