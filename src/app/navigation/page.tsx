@@ -561,8 +561,36 @@ const NavigationPage: React.FC = () => {
         const cachedRoute = JSON.parse(cachedRouteString);
         setRoute(cachedRoute.geojson);
         setRouteInfo({ ...cachedRoute.info, steps: cachedRoute.steps });
+        // Restore segments for navigation
+        if (cachedRoute.geojson?.geometry?.coordinates) {
+          const segs = splitRouteIntoSegments(
+            cachedRoute.geojson.geometry.coordinates
+          );
+          const segsWithInstructions = generateNavigationInstructions(segs);
+          setSegments(segsWithInstructions);
+        }
         setIsSearchPanelOpen(false);
         setLoading(false);
+        // Zoom to route (start and end)
+        if (mapRef.current && cachedRoute.geojson) {
+          setIsFlying(true);
+          mapRef.current.getMap().flyTo({
+            center: cachedRoute.geojson.geometry.coordinates[0],
+            zoom: 14,
+            speed: 1.2,
+          });
+          setTimeout(() => {
+            mapRef.current.getMap().flyTo({
+              center:
+                cachedRoute.geojson.geometry.coordinates[
+                  cachedRoute.geojson.geometry.coordinates.length - 1
+                ],
+              zoom: 14,
+              speed: 1.2,
+            });
+            setIsFlying(false);
+          }, 1200);
+        }
         return;
       } else {
         setError("Route not available offline");
@@ -655,8 +683,8 @@ const NavigationPage: React.FC = () => {
               speed: 1.2,
             });
             setIsFlying(false);
-            // Only for premium users, do flyAndCacheRoute
-            if (hasSubscription) {
+            // Treat as premium when offline or hasSubscription
+            if (isOffline || hasSubscription) {
               toast.info("Caching route tiles for offline use...");
               flyAndCacheRoute(mapRef.current.getMap(), routeData, 18, 30);
               setTimeout(
@@ -1007,11 +1035,17 @@ const NavigationPage: React.FC = () => {
 
   // Check subscription status on mount
   useEffect(() => {
+    if (!navigator.onLine) {
+      setHasSubscription(true);
+      setSubStatus(true);
+      return;
+    }
     fetch("/api/payment/status")
       .then((res) => res.json())
       .then((data) => {
         setHasSubscription(!!data.active);
         setSubStatus(!!data.active);
+        localStorage.setItem("premiumStatus", (!!data.active).toString());
       });
   }, []);
 
