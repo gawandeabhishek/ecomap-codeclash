@@ -89,7 +89,7 @@ EcoMap is a modern, hackathon-ready navigation app that works seamlessly online 
 
 ## 📣 Credits
 
-- Built by [Your Team Name] for [Hackathon Name].
+- Built by EcoCoding for CodeClash 2.0.
 - Powered by open-source and the amazing dev community!
 
 ---
