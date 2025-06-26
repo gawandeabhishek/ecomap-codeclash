@@ -1,22 +1,23 @@
 // middleware.ts
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher([
-  "/navigation(.*)",
-  "/settings(.*)",
-]);
+const isPublicRoute = createRouteMatcher(["/", "/navigation(.*)"]);
+
+const isProtectedRoute = createRouteMatcher(["/settings(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) auth.protect();
+  if (isPublicRoute(req)) return;
+
+  if (isProtectedRoute(req)) {
+    auth.protect();
+  }
 });
 
 export const config = {
   matcher: [
-    // Skip static files and Next.js internals
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-    // Include all routes
-    "/",
-    // Include API routes
+    // Exclude files with a dot (e.g., favicon.ico)
+    "/((?!.+.[w]+$|_next).*)/",
+    // Exclude API routes
     "/(api|trpc)(.*)",
   ],
 };

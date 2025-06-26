@@ -6,8 +6,14 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
+  ArrowLeft,
+  ArrowLeftCircle,
+  ArrowRight,
+  ArrowRightCircle,
+  ArrowUp,
   Building,
   Clock,
+  Flag,
   Loader2,
   Locate,
   MapPin,
@@ -16,12 +22,6 @@ import {
   Search,
   WifiOff,
   X,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  Flag,
-  ArrowLeftCircle,
-  ArrowRightCircle,
 } from "lucide-react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -134,17 +134,13 @@ const NavigationPage = () => {
   const endInputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
 
-  const MAP_STYLE =
-    "https://tile.openstreetmap.jp/styles/osm-bright-en/style.json";
-  const FALLBACK_MAP_STYLE = "https://demotiles.maplibre.org/style.json";
+  const MAP_STYLE = "https://demotiles.maplibre.org/style.json";
 
   // Offline cache keys
   const OFFLINE_CACHE_KEYS = {
     LOCATIONS: "offline-locations",
     ROUTES: "offline-routes",
   };
-
-  const DEFAULT_OFFLINE_LOCATION = [-74.006, 40.7128] as [number, number]; // New York
 
   // Update offline detection useEffect
   useEffect(() => {
@@ -240,29 +236,30 @@ const NavigationPage = () => {
     };
   }, [mapLoaded]);
 
-  const saveToRecentSearches = (location: LocationSuggestion) => {
-    const updated = [
-      location,
-      ...recentSearches.filter((item) => item.id !== location.id),
-    ].slice(0, 5);
-    setRecentSearches(updated);
-    localStorage.setItem("recentSearches", JSON.stringify(updated));
-
-    // Save to offline locations
-    const locationExists = offlineLocations.some(
-      (loc) => loc.id === location.id
-    );
-
-    if (!locationExists) {
-      const updatedOffline = [location, ...offlineLocations].slice(0, 100);
-
-      setOfflineLocations(updatedOffline);
-      localStorage.setItem(
-        OFFLINE_CACHE_KEYS.LOCATIONS,
-        JSON.stringify(updatedOffline)
-      );
-    }
-  };
+  const saveToRecentSearches = useCallback((location: LocationSuggestion) => {
+    // For recent searches
+    setRecentSearches((prevRecent) => {
+      const updated = [
+        location,
+        ...prevRecent.filter((item) => item.id !== location.id),
+      ].slice(0, 5);
+      localStorage.setItem("recentSearches", JSON.stringify(updated));
+      return updated;
+    });
+    // For offline locations
+    setOfflineLocations((prevOffline) => {
+      const locationExists = prevOffline.some((loc) => loc.id === location.id);
+      if (!locationExists) {
+        const updatedOffline = [location, ...prevOffline].slice(0, 100);
+        localStorage.setItem(
+          "offline-locations",
+          JSON.stringify(updatedOffline)
+        );
+        return updatedOffline;
+      }
+      return prevOffline;
+    });
+  }, []);
 
   const searchLocations = useCallback(
     async (query: string): Promise<LocationSuggestion[]> => {
@@ -373,66 +370,79 @@ const NavigationPage = () => {
     [searchLocations]
   );
 
-  const selectStartLocation = (suggestion: LocationSuggestion) => {
-    setStart(suggestion.name);
-    setShowStartDropdown(false);
-    setStartSuggestions([]);
-    saveToRecentSearches(suggestion);
-  };
+  const selectStartLocation = useCallback(
+    (suggestion: LocationSuggestion) => {
+      setStart(suggestion.name);
+      setShowStartDropdown(false);
+      setStartSuggestions([]);
+      saveToRecentSearches(suggestion);
+    },
+    [saveToRecentSearches]
+  );
 
-  const selectEndLocation = (suggestion: LocationSuggestion) => {
-    setEnd(suggestion.name);
-    setShowEndDropdown(false);
-    setEndSuggestions([]);
-    saveToRecentSearches(suggestion);
-  };
+  const selectEndLocation = useCallback(
+    (suggestion: LocationSuggestion) => {
+      setEnd(suggestion.name);
+      setShowEndDropdown(false);
+      setEndSuggestions([]);
+      saveToRecentSearches(suggestion);
+    },
+    [saveToRecentSearches]
+  );
 
-  const getLocationCoordinates = async (
-    locationName: string
-  ): Promise<[number, number] | null> => {
-    // First check offline cache
-    const cachedLocation = offlineLocations.find(
-      (loc) => loc.name.toLowerCase() === locationName.toLowerCase()
-    );
+  const getLocationCoordinates = useCallback(
+    async (locationName: string): Promise<[number, number] | null> => {
+      // First check offline cache
+      const cachedLocation = offlineLocations.find(
+        (loc) => loc.name.toLowerCase() === locationName.toLowerCase()
+      );
 
-    if (cachedLocation) {
-      return cachedLocation.coordinates;
-    }
+      if (cachedLocation) {
+        return cachedLocation.coordinates;
+      }
 
-    // Fallback to online search
-    const suggestions = await searchLocations(locationName);
-    return suggestions.length > 0 ? suggestions[0].coordinates : null;
-  };
+      // Fallback to online search
+      const suggestions = await searchLocations(locationName);
+      return suggestions.length > 0 ? suggestions[0].coordinates : null;
+    },
+    [offlineLocations, searchLocations]
+  );
 
   // --- Navigation Geometry Utilities ---
-  function calculateDistance(a: [number, number], b: [number, number]): number {
-    // Haversine formula
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const R = 6371000; // meters
-    const dLat = toRad(b[1] - a[1]);
-    const dLon = toRad(b[0] - a[0]);
-    const lat1 = toRad(a[1]);
-    const lat2 = toRad(b[1]);
-    const x = dLon * Math.cos((lat1 + lat2) / 2);
-    const y = dLat;
-    return Math.sqrt(x * x + y * y) * R;
-  }
+  const calculateDistance = useCallback(
+    (a: [number, number], b: [number, number]): number => {
+      // Haversine formula
+      const toRad = (deg: number) => (deg * Math.PI) / 180;
+      const R = 6371000; // meters
+      const dLat = toRad(b[1] - a[1]);
+      const dLon = toRad(b[0] - a[0]);
+      const lat1 = toRad(a[1]);
+      const lat2 = toRad(b[1]);
+      const x = dLon * Math.cos((lat1 + lat2) / 2);
+      const y = dLat;
+      return Math.sqrt(x * x + y * y) * R;
+    },
+    []
+  );
 
-  function calculateBearing(a: [number, number], b: [number, number]): number {
-    // Returns bearing in degrees from point a to b
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const toDeg = (rad: number) => (rad * 180) / Math.PI;
-    const lat1 = toRad(a[1]);
-    const lat2 = toRad(b[1]);
-    const dLon = toRad(b[0] - a[0]);
-    const y = Math.sin(dLon) * Math.cos(lat2);
-    const x =
-      Math.cos(lat1) * Math.sin(lat2) -
-      Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-    return (toDeg(Math.atan2(y, x)) + 360) % 360;
-  }
+  const calculateBearing = useCallback(
+    (a: [number, number], b: [number, number]): number => {
+      // Returns bearing in degrees from point a to b
+      const toRad = (deg: number) => (deg * Math.PI) / 180;
+      const toDeg = (rad: number) => (rad * 180) / Math.PI;
+      const lat1 = toRad(a[1]);
+      const lat2 = toRad(b[1]);
+      const dLon = toRad(b[0] - a[0]);
+      const y = Math.sin(dLon) * Math.cos(lat2);
+      const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+      return (toDeg(Math.atan2(y, x)) + 360) % 360;
+    },
+    []
+  );
 
-  function bearingToCardinal(bearing: number): string {
+  const bearingToCardinal = useCallback((bearing: number): string => {
     const directions = [
       "north",
       "northeast",
@@ -445,107 +455,137 @@ const NavigationPage = () => {
     ];
     const index = Math.round(bearing / 45) % 8;
     return directions[index];
-  }
+  }, []);
 
-  function formatDistance(meters: number): string {
+  const formatDistance = useCallback((meters: number): string => {
     if (meters > 1000) {
       return (meters / 1000).toFixed(1) + " km";
     }
     return Math.round(meters) + " meters";
-  }
+  }, []);
 
   // Move helpers outside the component to avoid useEffect dependency warning
-  const splitRouteIntoSegments = (
-    coordinates: [number, number][],
-    maxSegmentLength: number = 100
-  ): RouteSegment[] => {
-    const segments: RouteSegment[] = [];
-    let currentSegment: RouteSegment = {
-      startIndex: 0,
-      endIndex: 1,
-      coordinates: [coordinates[0], coordinates[1]],
-      distance: calculateDistance(coordinates[0], coordinates[1]),
-      bearing: calculateBearing(coordinates[0], coordinates[1]),
-    };
-    for (let i = 2; i < coordinates.length; i++) {
-      const prevPoint = coordinates[i - 1];
-      const currentPoint = coordinates[i];
-      const segmentDistance = calculateDistance(prevPoint, currentPoint);
-      const currentBearing = calculateBearing(prevPoint, currentPoint);
-      if (
-        Math.abs(currentBearing - currentSegment.bearing!) > 20 ||
-        currentSegment.distance + segmentDistance > maxSegmentLength
-      ) {
-        segments.push({ ...currentSegment });
-        currentSegment = {
-          startIndex: i - 1,
-          endIndex: i,
-          coordinates: [prevPoint, currentPoint],
-          distance: segmentDistance,
-          bearing: currentBearing,
-        };
-      } else {
-        currentSegment.coordinates.push(currentPoint);
-        currentSegment.distance += segmentDistance;
-        currentSegment.endIndex = i;
-      }
-    }
-    segments.push(currentSegment);
-    return segments;
-  };
-
-  const generateNavigationInstructions = (
-    segments: RouteSegment[]
-  ): RouteSegment[] => {
-    return segments.map((segment, index) => {
-      if (index === 0) {
-        return {
-          ...segment,
-          instruction: `Head ${bearingToCardinal(
-            segment.bearing!
-          )} for ${formatDistance(segment.distance)}`,
-          maneuver: "depart",
-        };
-      } else if (index === segments.length - 1) {
-        return {
-          ...segment,
-          instruction: "You have reached your destination",
-          maneuver: "arrive",
-        };
-      } else {
-        const prevSegment = segments[index - 1];
-        const turnAngle = segment.bearing! - prevSegment.bearing!;
-        let maneuver: RouteSegment["maneuver"] = "continue";
-        let instruction = "Continue straight";
-        if (turnAngle > 30 && turnAngle < 160) {
-          maneuver = "turn-right";
-          instruction = "Turn right";
-        } else if (turnAngle < -30 && turnAngle > -160) {
-          maneuver = "turn-left";
-          instruction = "Turn left";
-        } else if (turnAngle > 160) {
-          maneuver = "turn-sharp-right";
-          instruction = "Take a sharp right";
-        } else if (turnAngle < -160) {
-          maneuver = "turn-sharp-left";
-          instruction = "Take a sharp left";
-        } else if (turnAngle > 10 && turnAngle < 30) {
-          maneuver = "turn-slight-right";
-          instruction = "Take a slight right";
-        } else if (turnAngle < -10 && turnAngle > -30) {
-          maneuver = "turn-slight-left";
-          instruction = "Take a slight left";
+  const splitRouteIntoSegments = useCallback(
+    (
+      coordinates: [number, number][],
+      maxSegmentLength: number = 100
+    ): RouteSegment[] => {
+      const segments: RouteSegment[] = [];
+      let currentSegment: RouteSegment = {
+        startIndex: 0,
+        endIndex: 1,
+        coordinates: [coordinates[0], coordinates[1]],
+        distance: calculateDistance(coordinates[0], coordinates[1]),
+        bearing: calculateBearing(coordinates[0], coordinates[1]),
+      };
+      for (let i = 2; i < coordinates.length; i++) {
+        const prevPoint = coordinates[i - 1];
+        const currentPoint = coordinates[i];
+        const segmentDistance = calculateDistance(prevPoint, currentPoint);
+        const currentBearing = calculateBearing(prevPoint, currentPoint);
+        if (
+          Math.abs(currentBearing - currentSegment.bearing!) > 20 ||
+          currentSegment.distance + segmentDistance > maxSegmentLength
+        ) {
+          segments.push({ ...currentSegment });
+          currentSegment = {
+            startIndex: i - 1,
+            endIndex: i,
+            coordinates: [prevPoint, currentPoint],
+            distance: segmentDistance,
+            bearing: currentBearing,
+          };
+        } else {
+          currentSegment.coordinates.push(currentPoint);
+          currentSegment.distance += segmentDistance;
+          currentSegment.endIndex = i;
         }
-        return {
-          ...segment,
-          instruction: `${instruction} and head ${bearingToCardinal(
-            segment.bearing!
-          )} for ${formatDistance(segment.distance)}`,
-          maneuver,
-        };
       }
-    });
-  };
+      segments.push(currentSegment);
+      return segments;
+    },
+    [calculateDistance, calculateBearing]
+  );
+
+  const generateNavigationInstructions = useCallback(
+    (segments: RouteSegment[]): RouteSegment[] => {
+      return segments.map((segment, index) => {
+        if (index === 0) {
+          return {
+            ...segment,
+            instruction: `Head ${bearingToCardinal(
+              segment.bearing!
+            )} for ${formatDistance(segment.distance)}`,
+            maneuver: "depart",
+          };
+        } else if (index === segments.length - 1) {
+          return {
+            ...segment,
+            instruction: "You have reached your destination",
+            maneuver: "arrive",
+          };
+        } else {
+          const prevSegment = segments[index - 1];
+          const turnAngle = segment.bearing! - prevSegment.bearing!;
+          let maneuver: RouteSegment["maneuver"] = "continue";
+          let instruction = "Continue straight";
+          if (turnAngle > 30 && turnAngle < 160) {
+            maneuver = "turn-right";
+            instruction = "Turn right";
+          } else if (turnAngle < -30 && turnAngle > -160) {
+            maneuver = "turn-left";
+            instruction = "Turn left";
+          } else if (turnAngle > 160) {
+            maneuver = "turn-sharp-right";
+            instruction = "Take a sharp right";
+          } else if (turnAngle < -160) {
+            maneuver = "turn-sharp-left";
+            instruction = "Take a sharp left";
+          } else if (turnAngle > 10 && turnAngle < 30) {
+            maneuver = "turn-slight-right";
+            instruction = "Take a slight right";
+          } else if (turnAngle < -10 && turnAngle > -30) {
+            maneuver = "turn-slight-left";
+            instruction = "Take a slight left";
+          } else {
+            // Keep current 'continue' or 'instruction' if no significant turn
+          }
+          return {
+            ...segment,
+            instruction: `${instruction} and head ${bearingToCardinal(
+              segment.bearing!
+            )} for ${formatDistance(segment.distance)}`,
+            maneuver,
+          };
+        }
+      });
+    },
+    [bearingToCardinal, formatDistance]
+  );
+
+  const fitMapToRoute = useCallback((routeData: any) => {
+    if (mapRef.current && routeData?.geometry?.coordinates) {
+      setTimeout(() => {
+        const map = mapRef.current.getMap();
+        const coords: [number, number][] = routeData.geometry.coordinates;
+        const bounds = coords.reduce(
+          (bounds: maplibregl.LngLatBounds, coord: [number, number]) => {
+            return bounds.extend(coord);
+          },
+          new maplibregl.LngLatBounds(coords[0], coords[0])
+        );
+        map.fitBounds(bounds, {
+          padding: 80,
+          duration: 1000,
+        });
+      }, 300);
+    }
+  }, []);
+
+  const preloadTiles = useCallback(async () => {
+    // No-op: no tile preloading, no pmtiles
+    return;
+  }, []);
 
   const calculateRoute = async () => {
     if (!start || !end) {
@@ -560,32 +600,11 @@ const NavigationPage = () => {
     setIsNavigating(false);
     setCurrentStepIndex(0);
 
-    // Define fitMapToRoute outside the conditional blocks
-    const fitMapToRoute = (routeData: any) => {
-      if (mapRef.current && routeData?.geometry?.coordinates) {
-        setTimeout(() => {
-          const map = mapRef.current.getMap();
-          const coords: [number, number][] = routeData.geometry.coordinates;
-          const bounds = coords.reduce(
-            (bounds: maplibregl.LngLatBounds, coord: [number, number]) => {
-              return bounds.extend(coord);
-            },
-            new maplibregl.LngLatBounds(coords[0], coords[0])
-          );
-          map.fitBounds(bounds, {
-            padding: 80,
-            duration: 1000,
-          });
-        }, 300);
-      }
-    };
-
     // Check offline route cache first
     if (isOffline) {
-      const cachedRoute = offlineRoutes.find(
-        (r) => r.start === start && r.end === end
-      );
-      if (cachedRoute) {
+      const cachedRouteString = localStorage.getItem(`route-${start}-${end}`);
+      if (cachedRouteString) {
+        const cachedRoute = JSON.parse(cachedRouteString);
         setRoute(cachedRoute.geojson);
         setRouteInfo({ ...cachedRoute.info, steps: cachedRoute.steps });
         setIsSearchPanelOpen(false);
@@ -627,7 +646,6 @@ const NavigationPage = () => {
         const duration = Math.round(data.routes[0].duration / 60);
         let steps: any[] = [];
         if (data.routes[0].legs?.[0]?.steps?.length > 0) {
-          // Use OSRM steps if available
           steps = data.routes[0].legs[0].steps.map((step: any) => ({
             instruction: step.maneuver.instruction || "Continue",
             distance: step.distance,
@@ -636,7 +654,6 @@ const NavigationPage = () => {
             bearing: 0,
           }));
         } else if (routeData.geometry?.coordinates) {
-          // Generate steps from geometry if no OSRM steps (offline mode)
           steps = generateNavigationInstructions(
             splitRouteIntoSegments(routeData.geometry.coordinates)
           );
@@ -647,7 +664,21 @@ const NavigationPage = () => {
           steps,
         };
         setRouteInfo(routeInfoData);
-        // Save to offline cache
+
+        // Store route data in localStorage for offline access
+        const routeToCache = {
+          start,
+          end,
+          geojson: routeData,
+          info: { distance: `${distance} km`, duration: `${duration} min` },
+          steps,
+        };
+        localStorage.setItem(
+          `route-${start}-${end}`,
+          JSON.stringify(routeToCache)
+        );
+
+        // Save to offline locations
         const newRoute: OfflineRoute = {
           start,
           end,
@@ -667,6 +698,7 @@ const NavigationPage = () => {
         setTimeout(() => {
           fitMapToRoute(routeData);
         }, 100);
+        preloadTiles();
         setIsSearchPanelOpen(false);
       } else {
         setError("No route found");
@@ -858,7 +890,7 @@ const NavigationPage = () => {
       const segsWithInstructions = generateNavigationInstructions(segs);
       setSegments(segsWithInstructions);
     }
-  }, [route]);
+  }, [route, generateNavigationInstructions, splitRouteIntoSegments]);
 
   // Simulate navigation progress
   useEffect(() => {
@@ -871,7 +903,7 @@ const NavigationPage = () => {
             const nextSegmentIndex = currentSegmentIndex + 1;
             // Use local variable instead of setCurrentSegmentIndex to avoid unused var
             setCurrentSegmentIndex(nextSegmentIndex);
-            // Announce the next instruction if it's a maneuver
+            // Announce the next instruction if it\'s a maneuver
             if (
               nextSegmentIndex > 0 &&
               segments[nextSegmentIndex].maneuver !== "continue"
@@ -905,40 +937,16 @@ const NavigationPage = () => {
           ref={mapRef}
           mapLib={maplibregl}
           initialViewState={{
-            longitude:
-              userLocation?.[0] ||
-              (isOffline ? DEFAULT_OFFLINE_LOCATION[0] : 0),
-            latitude:
-              userLocation?.[1] ||
-              (isOffline ? DEFAULT_OFFLINE_LOCATION[1] : 0),
-            zoom: userLocation ? 12 : isOffline ? 12 : 2,
+            longitude: userLocation?.[0] || 0,
+            latitude: userLocation?.[1] || 0,
+            zoom: userLocation ? 12 : 2,
           }}
-          mapStyle={isOffline ? "/offline-map-style.json" : MAP_STYLE}
+          mapStyle={MAP_STYLE}
           style={{ width: "100%", height: "100%" }}
           onLoad={() => setMapLoaded(true)}
           onError={(e: any) => {
-            if (isOffline) {
-              // Create a simple fallback style
-              const fallbackStyle = {
-                version: 8,
-                sources: {},
-                layers: [
-                  {
-                    id: "background",
-                    type: "background",
-                    paint: { "background-color": "#e0e0e0" },
-                  },
-                ],
-              };
-              if (mapRef.current) {
-                mapRef.current.getMap().setStyle(fallbackStyle);
-              }
-              return;
-            }
             console.error("Map error:", e.error);
-            if (e.error?.status === 404 && mapRef.current) {
-              mapRef.current.getMap().setStyle(FALLBACK_MAP_STYLE);
-            }
+            setMapLoadError(true);
           }}
         >
           {mapLoadError && (

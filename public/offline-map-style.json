@@ -1,16 +1,10 @@
 {
   "version": 8,
-  "name": "Offline Map",
+  "name": "Offline Vector Map",
   "sources": {
-    "static-map": {
-      "type": "image",
-      "url": "/offline-map.jpg",
-      "coordinates": [
-        [77.564, 13.022],
-        [77.734, 13.022],
-        [77.734, 12.842],
-        [77.564, 12.842]
-      ]
+    "openmaptiles": {
+      "type": "vector",
+      "url": "pmtiles:///maps/planet.pmtiles"
     }
   },
   "layers": [
@@ -22,9 +16,39 @@
       }
     },
     {
-      "id": "static-map-layer",
-      "type": "raster",
-      "source": "static-map"
+      "id": "landuse_park",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "filter": ["==", "class", "park"],
+      "paint": {
+        "fill-color": "#d8e8c8"
+      }
+    },
+    {
+      "id": "roads",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "road",
+      "paint": {
+        "line-color": "#ffffff",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "places",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "place",
+      "filter": ["==", "$type", "Point"],
+      "layout": {
+        "text-field": "{name:en}",
+        "text-font": ["Open Sans Regular"],
+        "text-size": 12
+      },
+      "paint": {
+        "text-color": "#333333"
+      }
     }
   ]
 }
