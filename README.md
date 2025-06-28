@@ -2,7 +2,7 @@
 
 **Offline-First Navigation for Everyone**
 
-EcoMap is a modern, hackathon-ready navigation app that works seamlessly online and offline. Built with Next.js, Prisma, Clerk, and Neon.tech, it offers both free and premium plans, advanced offline caching, and a beautiful, responsive UI.
+EcoMap is a modern, hackathon-built navigation app designed to work seamlessly both online and offline. Developed for the **CodeClash 2.0 Hackathon hosted at Google**, it combines a beautiful UI with real-world features like offline caching, user authentication, and payments — all built using open-source tools.
 
 ---
 
@@ -89,8 +89,10 @@ EcoMap is a modern, hackathon-ready navigation app that works seamlessly online 
 
 ## 📣 Credits
 
-- Built by EcoCoding for CodeClash 2.0.
-- Powered by open-source and the amazing dev community!
+Built by the **EcoCoding Team** for **CodeClash 2.0 at Google**:  
+**[Abhishek Gawande](https://github.com/gawandeabhishek), [Satnam Singh](https://github.com/Satnam050), [Rakesh Das](https://github.com/rcd-env)**
+
+Powered by open-source tools and the amazing dev community!
 
 ---
 
